@@ -5,6 +5,8 @@ contract, get a clause-by-clause risk analysis grounded in the Indian Contract A
 1872 (and related statutes) with explainability, missing-clause and social-context
 detection, and a downloadable risk-mitigated rewrite (PDF/TXT).
 
+## Project demo 
+https://player.cloudinary.com/embed/?cloud_name=ovqlquj4&public_id=Screen_Recording_2026-07-16_at_01_la9btx
 
 ## Stack
 
