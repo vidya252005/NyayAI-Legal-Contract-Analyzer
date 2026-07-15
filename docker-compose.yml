@@ -1,0 +1,16 @@
+version: "3.9"
+
+# Optional: spins up a local MongoDB for the history feature.
+# Run: docker compose up -d
+# Then set MONGODB_URI=mongodb://127.0.0.1:27017/nyayai in backend/.env
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
