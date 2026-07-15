@@ -5,8 +5,6 @@ contract, get a clause-by-clause risk analysis grounded in the Indian Contract A
 1872 (and related statutes) with explainability, missing-clause and social-context
 detection, and a downloadable risk-mitigated rewrite (PDF/TXT).
 
-Rebuilt as a plain **MERN** stack (MongoDB, Express, React, Node) — no Replit
-tooling, no pnpm, no code-generation pipeline. Just `npm install` and go.
 
 ## Stack
 
@@ -44,35 +42,6 @@ nyayai/
 └── package.json             # npm workspaces root
 ```
 
-## Why this shape (system design notes)
-
-- **Stateless core, optional persistence.** The analyze/rewrite/export endpoints
-  never depend on the database — they work with zero configuration. MongoDB is
-  purely additive: when `MONGODB_URI` is set, completed analyses are saved
-  (fire-and-forget, never blocking or failing the request) so users can browse
-  history. This keeps the critical path fast and resilient to DB outages.
-- **Layered backend.** `routes` → `controllers` → `lib`/`models`, with a single
-  `errorHandler` middleware as a safety net and a `config/env.ts` module that
-  validates configuration once, at boot, instead of scattering
-  `process.env` reads (and their failure modes) across the codebase.
-- **No codegen pipeline.** The original project generated Zod schemas and a
-  React Query client from an OpenAPI spec via Orval, spread across three
-  packages. For an API this size, that indirection cost more than it saved —
-  schemas now live in one file (`backend/src/schemas`) and the frontend calls
-  a ~40-line typed fetch wrapper instead.
-- **NDJSON streaming kept as-is.** `/api/contracts/analyze` streams
-  newline-delimited JSON so the UI can render clauses as they're produced
-  instead of waiting for the entire (often large) analysis. Each event is
-  independently Zod-validated server-side before being forwarded, and a
-  character-level scanner (`lib/jsonExtraction.ts`) handles objects that span
-  multiple stream chunks — this logic was solid in the original project and
-  is preserved unchanged.
-- **Rate limiting on AI routes only.** `/api/contracts/*` is the only genuinely
-  expensive (LLM-backed) surface, so it gets its own limiter rather than
-  throttling cheap routes like `/healthz` under the same budget.
-- **npm workspaces, not pnpm.** Two packages (`backend`, `frontend`) don't need
-  pnpm's catalog/workspace-protocol machinery — plain npm workspaces are
-  simpler and remove a hard tooling dependency.
 
 ## Setup
 
